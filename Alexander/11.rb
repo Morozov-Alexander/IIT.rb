@@ -1,6 +1,6 @@
-#In this task i use gem - "colorize"
+#I guess that I shuld use gem"colorize" to solve this task
 #Дан массив в котором находятся строки "белый", "синий" и "красный" в случайном порядке. Необходимо упорядочить массив так, чтобы получился украинский флаг.
-# It is all that i can come up  with me broken brain. Moreover why not , Ukrainian - Yes!  
+# That's all I've came up  with. My brain is broken. Realy why not, Ukrainian - Yes!  
 require 'colorize'
 array = ["красный","синий","белый"]
 array.shuffle!
