@@ -1,7 +1,7 @@
 #Понять местами ключ-значения в хэше.
-array = {}
- (1..10).each {|i| array[i] = rand(100)}
+hash = {}
+ (1..10).each { |i| hash[i] = rand(100) }
 
-puts array.to_s + "---Было"
-array =array.invert
-puts array.to_s + "---Стало"
+p hash.to_s + '---Было'
+hash =hash.invert
+p hash.to_s + '---Стало'
