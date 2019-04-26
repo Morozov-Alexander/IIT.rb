@@ -3,5 +3,5 @@
 # That's all I've came up  with. My brain is broken. Realy why not, Ukrainian - Yes!
 require 'colorize'
 array = ["красный","синий","белый"]
-p array[0].light_yellow
-p array[1].blue
+puts array[0].light_yellow
+puts array[1].blue
