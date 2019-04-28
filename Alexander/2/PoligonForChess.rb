@@ -1,5 +1,2 @@
-a = {}
-ar = [1,1]
-a = {[1,1] => [1, 'w','R']}
-array = a[ar]
-puts array
+a = ['a','b']
+puts  a.find_all { |index| index == 'c'  }.size >0 ? 'y' : 'n'
