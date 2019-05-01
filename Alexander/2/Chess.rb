@@ -13,7 +13,7 @@ def wright
   puts 'Введиди Букву, а потом Цифру (координаты клетки)!'
   letter = replacement_array[gets.chomp.downcase]
   number = gets.chomp.to_i
-  [letter,number]
+  [letter, number]
 end
 
 class Board
@@ -33,21 +33,21 @@ end
 
 class Move < Board
 
-  def find_figure(coordinates)
+  def find_figure (coordinates)
     puts show_the_figure(@array = @@hash[coordinates].flatten)
   end
 
-  def show_the_figure(array)
+  def show_the_figure (array)
     puts array[0] == 1 ? "It is a #{array[2]}\nWhat do you want to do ?" : 'Empty cell!!'
   end
 
-  def check(color_of_move)
+  def check (color_of_move)
    color_of_move == @array[1] ? true : false
   end
 
-  def sexism(name, names, coordinates)
+  def sexism (name, names, coordinates)
     print "Так как ты #{name}!!!! "
-    if  names.find_all { |index| index == name  }.size >0
+    if  names.find_all { |index| index == name  }.size > 0
       puts 'То Я, как хозяин , даю тебе второй шанс!!!'
       coordinates = wright
     else
@@ -89,7 +89,6 @@ while flag
   next if !checkup(coordinates[0], coordinates[1])
 
   if color_of_move == 'w'
-
     Sasha.begin(coordinates, color_of_move)
     color_of_move = 'b'
   else
