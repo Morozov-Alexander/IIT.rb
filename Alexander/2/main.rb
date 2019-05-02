@@ -1,5 +1,5 @@
 require 'colorize'
-def checkup (number, letter)
+def checkup (letter, number )
   flag = true
   if !letter || !number.between?(1,8)
     puts "Няма таких симвалау!!!\nТольки {a, b, c, d, e, f, g, h}\nAnd numbers between(1..8)\nДаю еще попытку!"
@@ -12,87 +12,215 @@ def wright
   flag = false
   while !flag
     replacement_array = {'a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7, 'h' => 8}
-    puts 'Введиди Букву, а потом Цифру (координаты клетки)!'
-    letter = replacement_array[gets.chomp.downcase]
+    puts 'Введиди Цифру, а потом Букву (координаты клетки)!'
+
     number = gets.chomp.to_i
-    flag = checkup(number, letter)
+    letter = replacement_array[gets.chomp.downcase]
+    flag = checkup(letter, number)
   end
-  [letter, number]
+  [number, letter]
 end
 module Function
   attr_reader :color , :picture, :array_of_movies
   attr_accessor :array_of_possible_movies
   def show
-    print color == "White" ? picture.white.green : picture.black.yellow
+    print color == "White" ? picture.white : picture.black
+    print ' '
   end
 
   module Movies
+
     def forward (coordinates,limit, board)
-      coordinates[0] += 1
-      # puts limit
-      # puts coordinates[0]
-      # puts board.figure?(coordinates)
+      temp_array = Marshal.load(Marshal.dump(coordinates))
       array_of_movies = []
-      while coordinates[0] < 8 && board.figure?(coordinates) == true  && limit > 0
-        array_of_movies << coordinates
+      temp_array[0] +=1
+      while temp_array[0] < 8 && board.figure?(temp_array) == true  && limit > 0
+        array_of_movies <<   Marshal.load(Marshal.dump(temp_array))
         limit -= 1
-        puts 'yesssss'
-        p array_of_movies
-        coordinates[0] += 1
+        temp_array[0] += 1
       end
       array_of_movies
     end
 
     def back (coordinates,limit, board)
-      while coordinates[0] < 1 && board.figure?(coordinates) && limit > 0
-        coordinates[0] -= 1
-        array_of_movies << coordinates
-        limit -=1
+      temp_array = Marshal.load(Marshal.dump(coordinates))
+      array_of_movies = []
+      temp_array[0] -=1
+      while   temp_array[0] < 8 && board.figure?(temp_array) == true  && limit > 0
+        array_of_movies <<   Marshal.load(Marshal.dump(temp_array))
+        limit -= 1
+        temp_array[0] -= 1
       end
+      array_of_movies
     end
+
+    def right (coordinates,limit, board)
+      temp_array = Marshal.load(Marshal.dump(coordinates))
+      array_of_movies = []
+      temp_array[1] +=1
+      while   temp_array[1] < 8 && board.figure?(temp_array) == true  && limit > 0
+        array_of_movies <<   Marshal.load(Marshal.dump(temp_array))
+        limit -= 1
+        temp_array[1] += 1
+      end
+      array_of_movies
+    end
+
+    def left (coordinates,limit, board)
+      temp_array = Marshal.load(Marshal.dump(coordinates))
+      array_of_movies = []
+      temp_array[1] -=1
+      while   temp_array[1] < 8 && board.figure?(temp_array) == true  && limit > 0
+        array_of_movies <<   Marshal.load(Marshal.dump(temp_array))
+        limit -= 1
+        temp_array[1] -= 1
+      end
+      array_of_movies
+    end
+
+    def diagonal_left_up (coordinates,limit, board)
+      temp_array = Marshal.load(Marshal.dump(coordinates))
+      array_of_movies = []
+      temp_array[0] +=1
+      temp_array[1] +=1
+      while temp_array[0] < 8 && temp_array[1] < 8 && board.figure?(temp_array) == true  && limit > 0
+        array_of_movies <<   Marshal.load(Marshal.dump(temp_array))
+        limit -= 1
+        temp_array[0] +=1
+        temp_array[1] +=1
+      end
+      array_of_movies
+    end
+
+    def diagonal_left_down (coordinates,limit, board)
+      temp_array = Marshal.load(Marshal.dump(coordinates))
+      array_of_movies = []
+      temp_array[0] -=1
+      temp_array[1] +=1
+      while temp_array[0] < 8 && temp_array[1] < 8 && board.figure?(temp_array) == true  && limit > 0
+        array_of_movies <<   Marshal.load(Marshal.dump(temp_array))
+        limit -= 1
+        temp_array[0] -=1
+        temp_array[1] +=1
+      end
+      array_of_movies
+    end
+
+    def diagonal_right_up (coordinates,limit, board)
+      temp_array = Marshal.load(Marshal.dump(coordinates))
+      array_of_movies = []
+      temp_array[0] +=1
+      temp_array[1] -=1
+      while temp_array[0] < 8 && temp_array[1] < 8 && board.figure?(temp_array) == true  && limit > 0
+        array_of_movies <<   Marshal.load(Marshal.dump(temp_array))
+        limit -= 1
+        temp_array[0] +=1
+        temp_array[1] -=1
+      end
+      array_of_movies
+    end
+
+    def diagonal_right_down (coordinates,limit, board)
+      temp_array = Marshal.load(Marshal.dump(coordinates))
+      array_of_movies = []
+      temp_array[0] -=1
+      temp_array[1] -=1
+      while temp_array[0] < 8 && temp_array[1] < 8 && board.figure?(temp_array) == true  && limit > 0
+        array_of_movies <<   Marshal.load(Marshal.dump(temp_array))
+        limit -= 1
+        temp_array[0] -=1
+        temp_array[1] -=1
+      end
+      array_of_movies
+    end
+
 
   end
 
 end
 
 class King
-include Function
+  include Function
+  include Function::Movies
   def initialize(color)
     @color = color
     @picture = '♚'
+    @limit = 1
   end
+
+  def move(coordinates, board)
+    @array_of_movies = forward(coordinates, @limit, board)
+    @array_of_movies += back(coordinates, @limit, board)
+    @array_of_movies += left(coordinates, @limit, board)
+    @array_of_movies += right(coordinates, @limit, board)
+    @array_of_movies
+  end
+
 end
 
 class Queen
-include Function
+  include Function
+  include Function::Movies
   def initialize(color)
+    @limit = 8
     @color = color
     @picture= '♛'
+  end
+  def move(coordinates, board)
+    @array_of_movies = diagonal_right_down(coordinates,@limit, board)
+    @array_of_movies += diagonal_right_up(coordinates,@limit, board)
+    @array_of_movies += diagonal_left_down(coordinates,@limit, board)
+    @array_of_movies += diagonal_left_up(coordinates,@limit, board)
+    @array_of_movies += forward(coordinates, @limit, board)
+    @array_of_movies += back(coordinates, @limit, board)
+    @array_of_movies += left(coordinates, @limit, board)
+    @array_of_movies += right(coordinates, @limit, board)
+    @array_of_movies
   end
 end
 
 class Rook
-include Function
+  include Function
+  include Function::Movies
   def initialize(color)
     @color = color
     @picture = '♜'
+    @limit = 8
+  end
+  def move(coordinates, board)
+    @array_of_movies = forward(coordinates, @limit, board)
+    @array_of_movies += back(coordinates, @limit, board)
+    @array_of_movies += left(coordinates, @limit, board)
+    @array_of_movies += right(coordinates, @limit, board)
+    @array_of_movies
   end
 end
 
 class Bishop
-include Function
+  include Function
+  include Function::Movies
   def initialize(color)
+    @limit = 8
     @color = color
     @picture = '♝'
+  end
+  def move(coordinates, board)
+    @array_of_movies = diagonal_right_down(coordinates,@limit, board)
+    @array_of_movies += diagonal_right_up(coordinates,@limit, board)
+    @array_of_movies += diagonal_left_down(coordinates,@limit, board)
+    @array_of_movies += diagonal_left_up(coordinates,@limit, board)
+    @array_of_movies
   end
 end
 
 class Knight
-include Function
+  include Function
+  include Function::Movies
   def initialize(color)
     @color = color
     @picture = '♞'
   end
+
 end
 
 class Pawn
@@ -107,14 +235,13 @@ class Pawn
 
   def move(coordinates, board)
 
-    p @move
     @move == false ? @limit = 2 : @limit = 1
     @move = true
-  # @array_of_movies = @color == 'White' ? forward(coordinates, @limit, board) : back(coordinates, @limit, board)
-  coordinates[0] += 1
+   @array_of_movies = @color == 'White' ? forward(coordinates, @limit, board) : back(coordinates, @limit, board)
   end
 
 end
+
 class Empty
   @@picture = ' '
 
@@ -128,8 +255,10 @@ class Empty
 end
 
 class Board
-include Function::Movies
+  include Function
+  include Function::Movies
   @@empty = Empty.new
+  attr_reader :hash
   @@hash =
       { [1,1] => Rook.new('White'),[1,2] => Knight.new('White'),[1,3] => Bishop.new('White'),[1,4] => King.new('White'),[1,5] => Queen.new('White'),[1,6] => Bishop.new('White'),[1,7] =>  Knight.new('White'),[1,8] => Rook.new('White'),
         [2,1] => Pawn.new('White'),[2,2] => Pawn.new('White'),[2,3] => Pawn.new('White'),[2,4] => Pawn.new('White'),[2,5] => Pawn.new('White'),[2,6] => Pawn.new('White'),[2,7] => Pawn.new('White'),[2,8] => Pawn.new('White'),
@@ -143,14 +272,20 @@ include Function::Movies
         [8,1] => Rook.new('Black'),[8,2] => Knight.new('Black'),[8,3] => Bishop.new('Black'),[8,4] => King.new('Black'),[8,5] => Queen.new('Black'),[8,6] => Bishop.new('Black'),[8,7] => Knight.new('Black'),[8,8] => Rook.new('Black')}
 
   def show
+    puts " |a b c d e f g h"
     for i in 1..8
+      print i
+      print "|"
       for j in 1..8
         if @@hash[[i,j]] != 0
           @@hash[[i,j ]].show
         elsif i % 2 == j % 2
           @@empty.show_black
+          @@empty.show_black
         else
           @@empty.show_white
+          @@empty.show_white
+
         end
       end
         puts "\n"
@@ -178,21 +313,26 @@ include Function::Movies
   def check_the_figure(basic_color, color)
     color ==  basic_color ? true : false
   end
+
   public def figure? (coordinates)
    @@hash[coordinates] == 0  ? true : false
   end
 
   def check_the_move(coordinates, coordinates_of_move, board)
-    p coordinates
     @@hash[coordinates].move(coordinates, board)
-    p coordinates
-    p   @@hash[[2,2]].array_of_movies
-    # if  @@hash[coordinates].array_of_movies.include?(coordinates_of_move)
-    #   @@hash[coordinates], @@hash[coordinates_of_move] = @@hash[coordinates_of_move], @@hash[coordinates]
-    #   puts 'yes'
-    # else
-    #   puts 'nope'
-    # end
+    # p @@hash[coordinates].array_of_movies
+    # p @@hash[coordinates].array_of_movies.include?(coordinates_of_move)
+    if  @@hash[coordinates].array_of_movies.include?(coordinates_of_move)
+      @@hash[coordinates], @@hash[coordinates_of_move] = @@hash[coordinates_of_move], @@hash[coordinates]
+      puts 'yes'
+    else
+      puts 'nope'
+      @@hash[coordinates].array_of_movies.each do |index|
+      p index
+
+      end
+      coordinates_of_move = wright
+    end
   end
 
 end
@@ -212,16 +352,17 @@ puts 'First of all wright your names !!!'
 board = Board.new
 Sasha = Player.new(gets.chomp.to_s)
 Tanya = Player.new(gets.chomp.to_s)
-system "clear"
+
 
 
 while flag
-
+  system "clear"
   board.show
   puts color_of_move == 'White' ? "Сейчас ходит #{Sasha.name}" : "Сейчас ходит #{Tanya.name}"
   coordinates = wright
   board.show_element(coordinates, color_of_move)
   puts "Введи клетку , куда хочешь походить!!!"
+  board.show
   coordinates_of_move = wright
   board.check_the_move(coordinates, coordinates_of_move, board)
   # if color_of_move == 'White'
