@@ -25,9 +25,14 @@ end
 module Function
   attr_reader :color , :picture
   attr_accessor :array_of_possible_movies, :array_of_movies
-  def show
+  def show (flag)
+    unless flag
     print color == "White" ? picture.white : picture.black
     print ' '
+    else
+      print color == "White" ? picture.white.on_blue : picture.black.on_blue
+      print ' '.on_blue
+    end
   end
 
   module Movies
@@ -281,6 +286,10 @@ class Empty
   def show_white
     print @@picture.on_white
   end
+
+  def show_blue
+    print @@picture.on_blue
+  end
 end
 
 class Board
@@ -300,14 +309,23 @@ class Board
         [7,1] => Pawn.new('Black'),[7,2] => Pawn.new('Black'),[7,3] => Pawn.new('Black'),[7,4] => Pawn.new('Black'),[7,5] => Pawn.new('Black'),[7,6] => Pawn.new('Black'),[7,7] => Pawn.new('Black'),[7,8] => Pawn.new('Black'),
         [8,1] => Rook.new('Black'),[8,2] => Knight.new('Black'),[8,3] => Bishop.new('Black'),[8,4] => King.new('Black'),[8,5] => Queen.new('Black'),[8,6] => Bishop.new('Black'),[8,7] => Knight.new('Black'),[8,8] => Rook.new('Black')}
 
-  def show 
+  def show array_of_movies
     puts " |a b c d e f g h"
     for i in 1..8
       print i
       print "|"
       for j in 1..8
+        if array_of_movies.include?([i,j])
+          if @@hash[[i,j]] != 0
+          @@hash[[i,j]].show (true)
+        else
+          @@empty.show_blue
+          @@empty.show_blue
+        end
+        next
+        end
         if @@hash[[i,j]] != 0
-          @@hash[[i,j ]].show
+          @@hash[[i,j ]].show (false)
         elsif i % 2 == j % 2
           @@empty.show_black
           @@empty.show_black
@@ -322,13 +340,12 @@ class Board
   end
 
   def show_element(coordinates, color)
-
     @@flag = false
     while @@flag == false
       if check_the_figure(@@hash[coordinates].color, color) == true
           system "clear"
           print 'Вы выбрали - '
-          @@hash[coordinates].show
+          @@hash[coordinates].show (false)
           puts ""
         @@flag = true
       else
@@ -369,7 +386,14 @@ class Board
         puts 'del'
       end
     else
-      puts 'nope'
+      puts 'Nope!!!! Разогнался мне тут'
+      show( @@hash[coordinates].array_of_movies)
+      a = gets.chomp
+      # To be continued
+      #
+      #
+      #
+      #
     end
 
     end
@@ -396,12 +420,12 @@ Tanya = Player.new(gets.chomp.to_s)
 
 while flag
   # system "clear"
-  board.show
+  board.show ([-1,-1])
   puts color_of_move == 'White' ? "Сейчас ходит #{Sasha.name}" : "Сейчас ходит #{Tanya.name}"
   coordinates = wright
   board.show_element(coordinates, color_of_move)
   puts "Введи клетку , куда хочешь походить!!!"
-  board.show
+  board.show ([-1,-1])
   coordinates_of_move = wright
   board.check_the_move(coordinates, coordinates_of_move, board)
   # if color_of_move == 'White'
