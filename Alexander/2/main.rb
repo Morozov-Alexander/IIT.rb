@@ -1,5 +1,4 @@
 require 'colorize'
-
 def checkup (letter, number )
   flag = true
   if !letter || !number.between?(1,8)
@@ -22,9 +21,21 @@ def wright
   [number, letter]
 end
 
+def the_first (color_of_move, board)
+  fl = false
+  coordinates = wright
+  board.show_element(coordinates, color_of_move)
+  puts "Введи клетку , куда хочешь походить!!!"
+  board.show ([0, 0])
+  coordinates_of_move = wright
+  fl = true if  board.check_the_move(coordinates, coordinates_of_move, board)
+  board.check_the_shah(coordinates, board) if !fl
+  fl
+end
+
 module Function
-  attr_reader :color , :picture
-  attr_accessor :array_of_possible_movies, :array_of_movies
+  attr_reader :color, :picture, :hash
+  attr_accessor :array_of_movies
   def show (flag)
     unless flag
     print color == "White" ? picture.white : picture.black
@@ -277,6 +288,7 @@ class Pawn
 end
 
 class Empty
+  @color = 'Blue'
   @@picture = ' '
 
   def show_black
@@ -296,7 +308,6 @@ class Board
   include Function
   include Function::Movies
   @@empty = Empty.new
-  attr_reader :hash
   @@hash =
       { [1,1] => Rook.new('White'),[1,2] => Knight.new('White'),[1,3] => Bishop.new('White'),[1,4] => King.new('White'),[1,5] => Queen.new('White'),[1,6] => Bishop.new('White'),[1,7] =>  Knight.new('White'),[1,8] => Rook.new('White'),
         [2,1] => Pawn.new('White'),[2,2] => Pawn.new('White'),[2,3] => Pawn.new('White'),[2,4] => Pawn.new('White'),[2,5] => Pawn.new('White'),[2,6] => Pawn.new('White'),[2,7] => Pawn.new('White'),[2,8] => Pawn.new('White'),
@@ -342,7 +353,7 @@ class Board
   def show_element(coordinates, color)
     @@flag = false
     while @@flag == false
-      if check_the_figure(@@hash[coordinates].color, color) == true
+      if @@hash[coordinates] != 0 && check_the_figure(@@hash[coordinates].color, color) == true
           system "clear"
           print 'Вы выбрали - '
           @@hash[coordinates].show (false)
@@ -366,73 +377,73 @@ class Board
    elsif @@hash[temp_array].color == @@hash[coordinates].color || (@@hash[coordinates].class == Pawn && temp_array[1] == coordinates[1])
      false
    else
-     p 'add to array'
      array_of_movies << Marshal.load(Marshal.dump(temp_array))
      false
    end
   end
-
   def check_the_move(coordinates, coordinates_of_move, board)
     @@hash[coordinates].move(coordinates, board)
-    p @@hash[coordinates].array_of_movies
-    p @@hash[coordinates].array_of_movies.include?(coordinates_of_move)
     if @@hash[coordinates].array_of_movies.include?(coordinates_of_move)
       if @@hash[coordinates_of_move] == 0
         @@hash[coordinates], @@hash[coordinates_of_move] = @@hash[coordinates_of_move], @@hash[coordinates]
-        puts 'swap'
       else
+         if @@hash[coordinates_of_move].class == King
+           puts 'Game over!!!!!'
+           puts 'Давай до свидания'
+           sleep(4)
+           return true
+        end
         @@hash[coordinates_of_move] = @@hash[coordinates]
         @@hash[coordinates] = 0
-        puts 'del'
       end
     else
       puts 'Nope!!!! Разогнался мне тут'
       show( @@hash[coordinates].array_of_movies)
-      a = gets.chomp
-      # To be continued
-      #
-      #
-      #
-      #
+      puts 'Я как маленький разрабатченок разрешаю тебе выбрать новую клетку, желательно голубую'
+      puts 'Введи 1 , если хочешь походить другой фигурой или что-нибудь другой и выбери новую клетку для похода'
+      gets.chomp == '1' ? the_first(@@hash[coordinates].color, board) : check_the_move(coordinates, wright(), board)
     end
-
-    end
-
+    false
   end
-
-class Player
-  attr_reader :name
-  @@names = %w[ maksim sasha alex alexander max kirill maks sanya поц man root sudo admin я саша максим саня кирилл александр хозяин макс]
-  def initialize(name)
-    @name = name
+  def check_the_shah(coordinates, board)
+    system "clear"
+    color_of_move = 'White'
+    (1..2).each do
+      hit = []
+      @array_of_all_possible_move =[]
+      for i in 1..8
+        for j in 1..8
+          @array_of_all_possible_move += (@@hash[[i,j]].move([i,j], board)) if @@hash[[i,j]] != 0
+        end
+      end
+      hit = @array_of_all_possible_move.find_all { |index| @@hash[index].class == King && @@hash[index].color != color_of_move}
+      if hit != []
+        puts "Твое мурчало под угрозой!!!! --- " + color_of_move + "---Наносит ответный удар!!!"
+        sleep(4)
+      end
+      hit = 0
+      color_of_move = 'Black'
+    end
   end
 end
-
+class Player
+  attr_reader :name
+  def initialize(name, color)
+    @name = name
+    @color = color
+  end
+end
 flag = true
 color_of_move  = 'White'
 puts 'First of all wright your names !!!'
-
 board = Board.new
-Sasha = Player.new(gets.chomp.to_s)
-Tanya = Player.new(gets.chomp.to_s)
-
-
-
+Sasha = Player.new(gets.chomp.to_s, 'White')
+Tanya = Player.new(gets.chomp.to_s, 'Black')
+system "clear"
 while flag
-  # system "clear"
-  board.show ([-1,-1])
+  board.show ([0, 0])
   puts color_of_move == 'White' ? "Сейчас ходит #{Sasha.name}" : "Сейчас ходит #{Tanya.name}"
-  coordinates = wright
-  board.show_element(coordinates, color_of_move)
-  puts "Введи клетку , куда хочешь походить!!!"
-  board.show ([-1,-1])
-  coordinates_of_move = wright
-  board.check_the_move(coordinates, coordinates_of_move, board)
-  # if color_of_move == 'White'
-  #   color_of_move = 'Black'
-  # else
-  #
-  #   color_of_move = 'White'
-  # end
-# system "clear"
+  return if the_first(color_of_move, board)
+  # color_of_move = color_of_move == 'White' ? 'Black' : 'White'
+  system "clear"
 end
