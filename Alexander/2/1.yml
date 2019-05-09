@@ -1,0 +1,12 @@
+---
+- !ruby/object:Person
+  name: Alexander
+  sname: Morozov
+  email: 1@gmail.com
+- !ruby/object:Person
+  name: Maksim
+  sname: Shitsko
+  email: 2@mail.ru
+- !ruby/object:Kat
+  name: kat
+  age: 3
