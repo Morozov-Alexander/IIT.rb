@@ -9,14 +9,14 @@ def checkup(letter, number)
   flag
 end
 
-def wright(board)
+def wright(board, color_of_move)
   flag = false
   while !flag
     replacement_array = {'a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7, 'h' => 8}
     puts 'Введиди Цифру, а потом Букву (координаты клетки)!'
     number = gets.chomp.to_i
     letter = replacement_array[gets.chomp.downcase]
-    show_the_new_board(board)
+    show_the_new_board(board, color_of_move)
     flag = checkup(letter, number)
   end
   [number, letter]
@@ -24,11 +24,11 @@ end
 
 def the_first(color_of_move, board)
   fl = false
-  coordinates = wright(board)
+  coordinates = wright(board, color_of_move)
   coordinates = board.show_element(coordinates, color_of_move, board)
-  puts "Введи клетку , куда хочешь походить!!!"
-  board.show ([coordinates])
-  coordinates_of_move = wright(board)
+  puts "Введи клетку, куда хочешь походить!!!"
+  board.show([coordinates], color_of_move)
+  coordinates_of_move = wright(board, color_of_move)
   fl = true if board.check_the_move(coordinates, coordinates_of_move, board)
   board.check_the_shah(coordinates, board) if !fl
   fl
@@ -36,26 +36,29 @@ end
 def save(board)
   File.open('input.txt', 'w') { |f| f.write(board.hash.to_yaml) }
 end
-def show_the_new_board(board)
+def show_the_new_board(board, color_of_move)
   system "clear"
-  board.show([0, 0])
+  board.show([0, 0], color_of_move)
 end
 
 def load(board)
-  system "clear"
   board.hash = YAML.load_file('input.txt')
-  board.show([0, 0])
 end
 
 module Function
   attr_reader :color, :picture
   attr_accessor :array_of_movies, :hash, :move
-  def show flag
+  def show(flag, coordinates)
     unless flag
-      print color == "White" ? picture.white : picture.black
-      print ' '
+      if  coordinates[0] % 2 == coordinates[1] % 2
+        print color == "White" ? picture.yellow.on_black : picture.green.on_black
+        print ' '.on_black
+      else
+        print color == "White" ? picture.yellow.on_white : picture.green.on_white
+        print ' '.on_white
+      end
     else
-      print color == "White" ? picture.white.on_blue : picture.black.on_blue
+      print color == "White" ? picture.yellow.on_blue : picture.green.on_blue
       print ' '.on_blue
     end
   end
@@ -293,7 +296,7 @@ class Pawn
     else
       @array_of_movies = back(coordinates, @limit, board)
       @array_of_movies += diagonal_right_down(coordinates, 0, board)
-      @array_of_movies += diagonal_left_up(coordinates, 0, board)
+      @array_of_movies += diagonal_left_down(coordinates, 0, board)
     end
   end
 end
@@ -331,15 +334,16 @@ class Board
         [7,1] => Pawn.new('Black'),[7,2] => Pawn.new('Black'),[7,3] => Pawn.new('Black'),[7,4] => Pawn.new('Black'),[7,5] => Pawn.new('Black'),[7,6] => Pawn.new('Black'),[7,7] => Pawn.new('Black'),[7,8] => Pawn.new('Black'),
         [8,1] => Rook.new('Black'),[8,2] => Knight.new('Black'),[8,3] => Bishop.new('Black'),[8,4] => King.new('Black'),[8,5] => Queen.new('Black'),[8,6] => Bishop.new('Black'),[8,7] => Knight.new('Black'),[8,8] => Rook.new('Black')}
   end
-  def show array_of_movies
+  def show(array_of_movies, color_of_move)
     puts " |a b c d e f g h"
-    for i in 1..8
+    array = color_of_move == 'White' ? [8, 7, 6, 5, 4, 3, 2, 1 ] : [1, 2, 3, 4, 5, 6, 7, 8]
+    array.each do |i|
       print i
       print "|"
       for j in 1..8
         if array_of_movies.include?([i,j])
           if @hash[[i,j]] != 0
-            @hash[[i,j]].show(true)
+            @hash[[i,j]].show(true, [i,j])
           else
             @@empty.show_blue
             @@empty.show_blue
@@ -347,7 +351,7 @@ class Board
           next
         end
         if @hash[[i,j]] != 0
-          @hash[[i,j ]].show(false)
+          @hash[[i,j ]].show(false, [i,j])
         elsif i % 2 == j % 2
           @@empty.show_black
           @@empty.show_black
@@ -366,12 +370,12 @@ class Board
       if @hash[coordinates] != 0 && check_the_figure(@hash[coordinates].color, color)
         system "clear"
         print 'Вы выбрали - '
-        puts @hash[coordinates].show(true)
+        puts @hash[coordinates].show(true, coordinates)
         puts ""
         flag = true
       else
         puts 'Не тот цвет!!!'
-        coordinates = wright(board)
+        coordinates = wright(board, color)
       end
     end
     coordinates
@@ -393,23 +397,24 @@ class Board
   end
 
   def check_the_move(coordinates, coordinates_of_move, board)
+    flag = false
     if @hash[coordinates].class == Pawn
       @hash[coordinates].move(coordinates, board, 'ne proverka')
     else
       @hash[coordinates].move(coordinates, board)
     end
-    hit_or_swap(coordinates, coordinates_of_move, board)
-    false
+  flag = hit_or_swap(coordinates, coordinates_of_move, board)
+    flag
   end
+
   def hit_or_swap(coordinates, coordinates_of_move, board)
-    p coordinates_of_move
     if @hash[coordinates].array_of_movies.include?(coordinates_of_move)
       if @hash[coordinates_of_move] == 0
         @hash[coordinates], @hash[coordinates_of_move] = @hash[coordinates_of_move], @hash[coordinates]
       else
         if @hash[coordinates_of_move].class == King
           puts 'Game over!!!!!'
-          puts 'Давай до свидания'
+          puts 'Давай до свидания)'
           sleep(4)
           return true
         end
@@ -418,22 +423,21 @@ class Board
       end
     else
       system "clear"
-      puts 'Nope!!!! Разогнался мне тут'
-      show(@hash[coordinates].array_of_movies)
+      puts 'Nope!!!!'
+      show(@hash[coordinates].array_of_movies, @hash[coordinates].color)
       puts 'Я, как маленький разрабатченок разрешаю тебе выбрать новую клетку, желательно голубую'
       puts '1 - другая фигура ; != 1 - другая клетка для битья '
       if gets.chomp == '1'
-        @hash[coordinates].move = false if @hash[coordinates].class == Pawn && (coordinates[0] == 2 ||coordinates[0] == 7 )
-        show_the_new_board(board)
+        @hash[coordinates].move = false if @hash[coordinates].class == Pawn && (coordinates[0] == 2 ||coordinates[0] == 7)
+        show_the_new_board(board, @hash[coordinates].color)
         the_first(@hash[coordinates].color, board)
       else
-        # system "clear"
-        # show([coordinates])
-         hit_or_swap(coordinates, wright(board), board)
+         hit_or_swap(coordinates, wright(board, @hash[coordinates].color), board)
        end
     end
-
+    false
   end
+
   def check_the_shah(coordinates, board)
     system "clear"
     color_of_move = 'White'
@@ -442,16 +446,17 @@ class Board
       @array_of_all_possible_move =[]
       for i in 1..8
         for j in 1..8
-          if @hash[[i,j]].class == Pawn && @hash[[i,j]] != 0
-            @hash[[i,j]].move([i,j], board, 'proverka')
+          if @hash[[i,j]].class == Pawn
+            @array_of_all_possible_move += @hash[[i,j]].move([i,j], board, 'proverka')
           elsif @hash[[i,j]] != 0
-            @hash[[i,j]].move([i,j], board)
+            @array_of_all_possible_move += @hash[[i,j]].move([i,j], board)
           end
         end
       end
       hit = @array_of_all_possible_move.find_all { |index| @hash[index].class == King && @hash[index].color != color_of_move }
       if hit != []
         puts "Твое мурчало под угрозой!!!! --- " + color_of_move + "---Наносит ответный удар!!!"
+        puts 'Black => Green, White = Yellow'
         sleep(4)
       end
       hit = 0
@@ -461,30 +466,16 @@ class Board
 
 end
 
-class Player
-  attr_reader :name
-  def initialize(name, color)
-    @name = name
-    @color = color
-  end
-end
 flag = true
 color_of_move  = 'White'
-puts 'First of all wright your names !!!'
-puts 'Это только для того, чтобы не называть вас белый и черный, как никак увАжение'
 board = Board.new()
-Sasha = Player.new(gets.chomp.to_s, 'White')
-Tanya = Player.new(gets.chomp.to_s, 'Black')
-puts "if  you want, you may dowanload a file, please\npress 1 to download or other numbers to continue!"
+puts 'Press 1 - to input file'
 load (board) if gets.chomp.to_i == 1 #Выводит последний ход, да можно сделать, чтобы сохранялся только тот ход который попросят,
-                                     # но тогда все становится слишком медленно с постоянными вопросами ,"Не хотите ли сохрониться?"
-system "clear"
-
+system "clear"                       # но тогда все становится слишком медленно с постоянными вопросами ,"Не хотите ли сохрониться?"
 while flag
-  board.show([0, 0])
+  board.show([0, 0], color_of_move)
   save(board)
-  puts color_of_move == 'White' ? "Сейчас ходит #{Sasha.name}" : "Сейчас ходит #{Tanya.name}"
   return if the_first(color_of_move, board)
    color_of_move = color_of_move == 'White' ? 'Black' : 'White' #Если просто тестить то рекомендую закоментить, так проще, ходить только белыми
-  system "clear"
+  # system "clear"
 end
