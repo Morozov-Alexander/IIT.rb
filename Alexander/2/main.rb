@@ -3,20 +3,20 @@ require 'yaml'
 def checkup(letter, number)
   flag = true
   if !letter || !number.between?(1, 8)
-    system "clear"
     puts "Няма таких симвалау!!!\nТольки {a, b, c, d, e, f, g, h}\nAnd numbers between(1..8)"
     flag = false
   end
   flag
 end
 
-def wright
+def wright(board)
   flag = false
   while !flag
     replacement_array = {'a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6, 'g' => 7, 'h' => 8}
     puts 'Введиди Цифру, а потом Букву (координаты клетки)!'
     number = gets.chomp.to_i
     letter = replacement_array[gets.chomp.downcase]
+    show_the_new_board(board)
     flag = checkup(letter, number)
   end
   [number, letter]
@@ -24,17 +24,21 @@ end
 
 def the_first(color_of_move, board)
   fl = false
-  coordinates = wright
-  board.show_element(coordinates, color_of_move)
+  coordinates = wright(board)
+  coordinates = board.show_element(coordinates, color_of_move, board)
   puts "Введи клетку , куда хочешь походить!!!"
   board.show ([coordinates])
-  coordinates_of_move = wright
+  coordinates_of_move = wright(board)
   fl = true if board.check_the_move(coordinates, coordinates_of_move, board)
   board.check_the_shah(coordinates, board) if !fl
   fl
 end
 def save(board)
   File.open('input.txt', 'w') { |f| f.write(board.hash.to_yaml) }
+end
+def show_the_new_board(board)
+  system "clear"
+  board.show([0, 0])
 end
 
 def load(board)
@@ -356,21 +360,22 @@ class Board
     end
   end
 
-  def show_element(coordinates, color)
-    @@flag = false
-    while @@flag == false
+  def show_element(coordinates, color, board)
+    flag = false
+    while !flag
       if @hash[coordinates] != 0 && check_the_figure(@hash[coordinates].color, color)
         system "clear"
         print 'Вы выбрали - '
         puts @hash[coordinates].show(true)
         puts ""
-        @@flag = true
+        flag = true
       else
+        show_the_new_board(board)
         puts 'Не тот цвет!!!'
         coordinates = wright
       end
     end
-
+    coordinates
   end
 
   def check_the_figure(basic_color, color)
@@ -394,7 +399,10 @@ class Board
     else
       @hash[coordinates].move(coordinates, board)
     end
-
+    hit_or_swap(coordinates, coordinates_of_move, board)
+    false
+  end
+  def hit_or_swap(coordinates, coordinates_of_move, board)
     if @hash[coordinates].array_of_movies.include?(coordinates_of_move)
       if @hash[coordinates_of_move] == 0
         @hash[coordinates], @hash[coordinates_of_move] = @hash[coordinates_of_move], @hash[coordinates]
@@ -414,11 +422,15 @@ class Board
       show(@hash[coordinates].array_of_movies)
       puts 'Я, как маленький разрабатченок разрешаю тебе выбрать новую клетку, желательно голубую'
       puts '1 - другая фигура ; != 1 - другая клетка для битья '
-      gets.chomp == '1' ? the_first(@hash[coordinates].color, board) : check_the_move(coordinates, wright(), board)
+      if gets.chomp == '1'
+        show_the_new_board(board)
+        the_first(@hash[coordinates].color, board)
+      else
+         hit_or_swap(coordinates, wright(board), board)
+       end
     end
-    false
-  end
 
+  end
   def check_the_shah(coordinates, board)
     system "clear"
     color_of_move = 'White'
@@ -443,6 +455,7 @@ class Board
       color_of_move = 'Black'
     end
   end
+
 end
 
 class Player
