@@ -49,7 +49,7 @@ end
 
 module Function
   attr_reader :color, :picture
-  attr_accessor :array_of_movies, :hash
+  attr_accessor :array_of_movies, :hash, :move
   def show flag
     unless flag
       print color == "White" ? picture.white : picture.black
@@ -370,9 +370,8 @@ class Board
         puts ""
         flag = true
       else
-        show_the_new_board(board)
         puts 'Не тот цвет!!!'
-        coordinates = wright
+        coordinates = wright(board)
       end
     end
     coordinates
@@ -403,6 +402,7 @@ class Board
     false
   end
   def hit_or_swap(coordinates, coordinates_of_move, board)
+    p coordinates_of_move
     if @hash[coordinates].array_of_movies.include?(coordinates_of_move)
       if @hash[coordinates_of_move] == 0
         @hash[coordinates], @hash[coordinates_of_move] = @hash[coordinates_of_move], @hash[coordinates]
@@ -423,9 +423,12 @@ class Board
       puts 'Я, как маленький разрабатченок разрешаю тебе выбрать новую клетку, желательно голубую'
       puts '1 - другая фигура ; != 1 - другая клетка для битья '
       if gets.chomp == '1'
+        @hash[coordinates].move = false if @hash[coordinates].class == Pawn && (coordinates[0] == 2 ||coordinates[0] == 7 )
         show_the_new_board(board)
         the_first(@hash[coordinates].color, board)
       else
+        # system "clear"
+        # show([coordinates])
          hit_or_swap(coordinates, wright(board), board)
        end
     end
