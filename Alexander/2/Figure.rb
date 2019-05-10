@@ -1,6 +1,6 @@
 class Figure
   attr_reader :color, :picture
-  attr_accessor :array_of_movies, :hash, :move
+  attr_accessor :array_of_movies
   def show(flag, coordinates)
     unless flag
       if  coordinates[0] % 2 == coordinates[1] % 2

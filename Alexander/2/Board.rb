@@ -1,4 +1,5 @@
 class Board
+  attr_accessor :hash
   def initialize
     @@empty = Empty.new
     @hash =
