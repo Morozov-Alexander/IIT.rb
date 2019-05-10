@@ -1,5 +1,4 @@
-require_relative 'Module.rb'
-module Function
+class Figure
   attr_reader :color, :picture
   attr_accessor :array_of_movies, :hash, :move
   def show(flag, coordinates)
@@ -16,8 +15,6 @@ module Function
       print ' '.on_blue
     end
   end
-
-  module Movies
 
     def forward(coordinates, limit, board)
       temp_array = Marshal.load(Marshal.dump(coordinates))
@@ -137,7 +134,5 @@ module Function
       end
       array_of_movies
     end
-    false
-  end
 
 end

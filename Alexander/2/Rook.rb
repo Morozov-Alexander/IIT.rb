@@ -1,6 +1,5 @@
-class Rook
-  include Function
-  include Function::Movies
+require_relative 'Figure.rb'
+class Rook < Figure
   def initialize(color)
     @color = color
     @picture = '♜'

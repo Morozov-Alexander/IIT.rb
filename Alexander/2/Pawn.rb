@@ -1,7 +1,5 @@
-class Pawn
-  include Function
-  include Function::Movies
-
+require_relative 'Figure.rb'
+class Pawn < Figure
   def initialize(color)
     @move = false
     @color = color

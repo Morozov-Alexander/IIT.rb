@@ -1,6 +1,5 @@
-class King
-  include Function
-  include Function::Movies
+require_relative 'Figure.rb'
+class King < Figure
   def initialize(color)
     @color = color
     @picture = '♚'

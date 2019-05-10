@@ -1,7 +1,4 @@
-require_relative 'Module.rb'
 class Board
-  include Function
-  include Function::Movies
   def initialize
     @@empty = Empty.new
     @hash =

@@ -1,6 +1,5 @@
-class Queen
-  include Function
-  include Function::Movies
+require_relative 'Figure.rb'
+class Queen < Figure
   def initialize(color)
     @limit = 8
     @color = color
