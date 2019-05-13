@@ -1,4 +1,6 @@
-class Figure
+require_relative 'Game.rb'
+
+class Figure < Game
   attr_reader :color, :picture
   attr_accessor :array_of_movies
   def show(flag, coordinates)

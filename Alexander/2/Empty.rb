@@ -1,4 +1,4 @@
-class Empty
+class Cell
   @color = 'Blue'
   @@picture = ' '
   def show_black
