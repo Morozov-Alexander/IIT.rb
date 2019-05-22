@@ -28,29 +28,10 @@ class Board < Game
       print i
       print "|"
       for j in 1..8
-        array_of_movies.include?([i, j]) ? show_with_blue_color(i, j) : show_without_blue_color(i, j)
+        check_the_blue_color(i, j, array_of_movies)
       end
       puts ''
 
-    end
-  end
-  def show_with_blue_color(i, j)
-    unless cell?(i, j)
-      @hash[[i,j]].show(true, [i,j])
-    else
-      @cell.show_blue
-      @cell.show_blue
-    end
-  end
-  def show_without_blue_color(i, j)
-    if !cell?(i, j)
-      @hash[[i,j]].show(false, [i,j])
-    elsif i.odd? == j.odd?
-      @cell.show_black
-      @cell.show_black
-    else
-      @cell.show_white
-      @cell.show_white
     end
   end
   def show_element(coordinates, color, board)
@@ -70,7 +51,9 @@ class Board < Game
     end
     coordinates
   end
-
+  def check_the_blue_color(i, j, array_of_movies)
+    array_of_movies.include?([i, j]) ? @hash[[i,j]].show(true, [i,j]) : @hash[[i,j]].show(false, [i,j])
+  end
   def the_same_color?(basic_color, color)
     color == basic_color ? true : false
   end
@@ -118,7 +101,7 @@ class Board < Game
       puts 'Рекомендую голубую!!'
       puts '1 - другая фигура ; != 1 - другая клетка для насилия'
       if gets.chomp == '1'
-        @hash[coordinates].move = false if @hash[coordinates].class == Pawn && (coordinates[0] == 2 ||coordinates[0] == 7)
+        @hash[coordinates].first_move if @hash[coordinates].class == Pawn && (coordinates[0] == 2 || coordinates[0] == 7)
         show_the_new_board(board, @hash[coordinates].color)
         the_first(@hash[coordinates].color, board)
       else
