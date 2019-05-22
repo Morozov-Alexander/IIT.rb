@@ -4,16 +4,16 @@ class Board < Game
   def initialize
     @cell = Cell.new
     @hash =
-      { [1,1] => Rook.new('White'),[1,2] => Knight.new('White'),[1,3] => Bishop.new('White'),[1,4] => King.new('White'),[1,5] => Queen.new('White'),[1,6] => Bishop.new('White'),[1,7] =>  Knight.new('White'),[1,8] => Rook.new('White'),
-        [2,1] => Pawn.new('White'),[2,2] => Pawn.new('White'),[2,3] => Pawn.new('White'),[2,4] => Pawn.new('White'),[2,5] => Pawn.new('White'),[2,6] => Pawn.new('White'),[2,7] => Pawn.new('White'),[2,8] => Pawn.new('White'),
+      { [1,1] => Rook.new('White', '♜'),[1,2] => Knight.new('White', '♞'),[1,3] => Bishop.new('White','♝'),[1,4] => King.new('White', '♚'),[1,5] => Queen.new('White', '♛'),[1,6] => Bishop.new('White', '♝'),[1,7] =>  Knight.new('White', '♞'),[1,8] => Rook.new('White', '♜'),
+        [2,1] => Pawn.new('White','♟'),[2,2] => Pawn.new('White','♟'),[2,3] => Pawn.new('White','♟'),[2,4] => Pawn.new('White','♟'),[2,5] => Pawn.new('White','♟'),[2,6] => Pawn.new('White','♟'),[2,7] => Pawn.new('White','♟'),[2,8] => Pawn.new('White','♟'),
         [3,1] => @cell,[3,2] => @cell,[3,3] => @cell,[3,4] => @cell,[3,5] => @cell,[3,6] => @cell,[3,7] => @cell,[3,8] => @cell,
         [4,1] => @cell,[4,2] => @cell,[4,3] => @cell,[4,4] => @cell,[4,5] => @cell,[4,6] => @cell,[4,7] => @cell,[4,8] => @cell,
         [5,1] => @cell,[5,2] => @cell,[5,3] => @cell,[5,4] => @cell,[5,5] => @cell,[5,6] => @cell,[5,7] => @cell,[5,8] => @cell,
         [6,1] => @cell,[6,2] => @cell,[6,3] => @cell,[6,4] => @cell,[6,5] => @cell,[6,6] => @cell,[6,7] => @cell,[6,8] => @cell,
         [7,1] => @cell,[7,2] => @cell,[7,3] => @cell,[7,4] => @cell,[5,5] => @cell,[5,6] => @cell,[5,7] => @cell,[5,8] => @cell,
         [6,1] => @cell,[6,2] => @cell,[6,3] => @cell,[6,4] => @cell,[6,5] => @cell,[6,6] => @cell,[6,7] => @cell,[6,8] => @cell,
-        [7,1] => Pawn.new('Black'),[7,2] => Pawn.new('Black'),[7,3] => Pawn.new('Black'),[7,4] => Pawn.new('Black'),[7,5] => Pawn.new('Black'),[7,6] => Pawn.new('Black'),[7,7] => Pawn.new('Black'),[7,8] => Pawn.new('Black'),
-        [8,1] => Rook.new('Black'),[8,2] => Knight.new('Black'),[8,3] => Bishop.new('Black'),[8,4] => King.new('Black'),[8,5] => Queen.new('Black'),[8,6] => Bishop.new('Black'),[8,7] => Knight.new('Black'),[8,8] => Rook.new('Black')}
+        [7,1] => Pawn.new('Black','♟'),[7,2] => Pawn.new('Black','♟'),[7,3] => Pawn.new('Black','♟'),[7,4] => Pawn.new('Black','♟'),[7,5] => Pawn.new('Black','♟'),[7,6] => Pawn.new('Black','♟'),[7,7] => Pawn.new('Black','♟'),[7,8] => Pawn.new('Black','♟'),
+        [8,1] => Rook.new('Black', '♜'),[8,2] => Knight.new('Black', '♞'),[8,3] => Bishop.new('Black','♝'),[8,4] => King.new('Black', '♚'),[8,5] => Queen.new('Black', '♛'),[8,6] => Bishop.new('Black', '♝'),[8,7] => Knight.new('Black', '♞'),[8,8] => Rook.new('Black', '♜')}
   end
   def cell?(i, j)
      @hash[[i,j]].class == Cell ? true : false
@@ -37,7 +37,6 @@ class Board < Game
   def show_element(coordinates, color, board)
     flag = true
     while flag
-
       if !cell?(coordinates[0], coordinates[1]) && the_same_color?(@hash[coordinates].color, color)
         system "clear"
         print 'Твой голубой вассал - '
@@ -51,9 +50,11 @@ class Board < Game
     end
     coordinates
   end
+ 
   def check_the_blue_color(i, j, array_of_movies)
     array_of_movies.include?([i, j]) ? @hash[[i,j]].show(true, [i,j]) : @hash[[i,j]].show(false, [i,j])
   end
+ 
   def the_same_color?(basic_color, color)
     color == basic_color ? true : false
   end

@@ -1,8 +1,13 @@
 require_relative 'Game.rb'
-
 class Figure < Game
   attr_reader :color, :picture
   attr_accessor :array_of_movies
+  
+  def initialize(color, picture)
+    @color = color
+    @picture = picture
+  end
+  
   def show(flag, coordinates)
     unless flag
       show_on_white_or_black(coordinates)

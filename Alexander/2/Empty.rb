@@ -1,7 +1,6 @@
 require_relative 'Figure.rb'
 class Cell < Figure
   def initialize
-    @color = 'Blue'
-    @picture = ' '
+    super('Blue', ' ')
   end
 end

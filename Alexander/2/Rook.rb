@@ -1,8 +1,7 @@
 require_relative 'Figure.rb'
 class Rook < Figure
-  def initialize(color)
-    @color = color
-    @picture = '♜'
+  def initialize(color, picture)
+    super(color, picture)
     @limit = 8
   end
   def move(coordinates, board)

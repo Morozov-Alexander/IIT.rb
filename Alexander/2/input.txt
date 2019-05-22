@@ -37,9 +37,9 @@
 ? - 1
   - 5
 : !ruby/object:Queen
-  limit: 8
   color: White
   picture: "♛"
+  limit: 8
   array_of_movies: []
 ? - 1
   - 6
@@ -185,7 +185,9 @@
   color: White
   picture: "♟"
   limit: 1
-  array_of_movies: []
+  array_of_movies:
+  - - 5
+    - 1
 ? - 4
   - 2
 : *1
@@ -209,12 +211,7 @@
 : *1
 ? - 5
   - 1
-: !ruby/object:Pawn
-  move: true
-  color: Black
-  picture: "♟"
-  limit: 1
-  array_of_movies: []
+: *1
 ? - 5
   - 2
 : *1
@@ -262,7 +259,16 @@
 : *1
 ? - 7
   - 1
-: *1
+: !ruby/object:Pawn
+  move: false
+  color: Black
+  picture: "♟"
+  limit: 2
+  array_of_movies:
+  - - 6
+    - 1
+  - - 5
+    - 1
 ? - 7
   - 2
 : !ruby/object:Pawn
@@ -353,11 +359,7 @@
   color: Black
   picture: "♜"
   limit: 8
-  array_of_movies:
-  - - 7
-    - 1
-  - - 6
-    - 1
+  array_of_movies: []
 ? - 8
   - 2
 : !ruby/object:Knight
@@ -385,9 +387,9 @@
 ? - 8
   - 5
 : !ruby/object:Queen
-  limit: 8
   color: Black
   picture: "♛"
+  limit: 8
   array_of_movies: []
 ? - 8
   - 6

@@ -1,9 +1,8 @@
 require_relative 'Figure.rb'
 class Queen < Figure
-  def initialize(color)
+  def initialize(color, picture)
+    super(color, picture)
     @limit = 8
-    @color = color
-    @picture= '♛'
   end
   def move(coordinates, board)
     @array_of_movies = diagonal_right_down(coordinates, @limit, board)

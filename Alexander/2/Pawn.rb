@@ -1,11 +1,9 @@
 require_relative 'Figure.rb'
 class Pawn < Figure
-  def initialize(color)
+  def initialize(color, picture)
     @move = false
-    @color = color
-    @picture = '♟'
+    super(color, picture)
   end
-
   def move(coordinates, board, proverka)
     check_the_first_step(proverka)
     @color == 'White' ? steps_for_white(coordinates, board, proverka) : steps_for_black(coordinates, board, proverka)
